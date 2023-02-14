@@ -8,12 +8,32 @@ var cargaTabla = () => {
         $.each(datos, (index, val) => {
             html += "<tr>" + "<td>" + (
                 index + 1
-            ) + "</td>" + "<td>" + val.nombre + "</td>" + "<td>" + val.usuario + "</td>" + "<td>" + val.email + "</td>" + "<td>" + "<button class='btn btn-success' onclick=editar('" + val._id + "')>Editar</button>" + "<button class='btn btn-danger'>Eliminar</button>" + "</td>" + "</tr>";
+            ) + "</td>" + "<td>" + val.nombre + "</td>" + "<td>" + val.usuario + "</td>" + "<td>" + val.email + "</td>" + "<td>" + "<button class='btn btn-success' onclick=editar('" + val._id + "')>Editar</button>" + "<button class='btn btn-danger' onclick=eliminar('" + val._id + "')>Eliminar</button>" + "</td>" + "</tr>";
         });
         $('#cuerpo').html(html);
     });
 }
-
+var eliminar = (id) => {
+    $.ajax({
+        url: 'http://localhost:3000/api/v1/usuarios/' + id,
+        type: 'DELETE',
+        processData: false,
+        contentType: false,
+        cache: false,
+        headers: {
+            "Content-Type": "application/json"
+        },
+        success: (estado) => {
+            console.log(estado);
+            if (estado) {
+                cargaTabla();
+                limpiaCajas();
+            } else {
+                alert('Error al guardar en la base de datos')
+            }
+        }
+    });
+}
 var editar = (id) => {
     $.get('http://localhost:3000/api/v1/usuarios/' + id, (IUsuario) => {
         document.getElementById('nombre').value = IUsuario.nombre; // es con javascript
@@ -31,7 +51,7 @@ var nuevo = () => {
 
 var guardar = () => {
     var url = '';
-    var tipo='';
+    var tipo = '';
     var nombre = document.getElementById('nombre').value; // es con javascript
     var usuario = $('#usuario').val(); // con jquery
     var email = $('#email').val();
@@ -45,7 +65,7 @@ var guardar = () => {
             password: passwrod
         }
         url = 'http://localhost:3000/api/v1/usuarios';
-        tipo='POST';
+        tipo = 'POST';
     } else {
         var usuarioDTO = {
             id: id,
@@ -55,7 +75,7 @@ var guardar = () => {
             password: passwrod
         }
         url = 'http://localhost:3000/api/v1/usuarios/' + id;
-        tipo='PUT';
+        tipo = 'PUT';
     }
 
 
