@@ -14,25 +14,49 @@ var cargaTabla = () => {
     });
 }
 var eliminar = (id) => {
-    $.ajax({
-        url: 'http://localhost:3000/api/v1/usuarios/' + id,
-        type: 'DELETE',
-        processData: false,
-        contentType: false,
-        cache: false,
-        headers: {
-            "Content-Type": "application/json"
-        },
-        success: (estado) => {
-            console.log(estado);
-            if (estado) {
-                cargaTabla();
-                limpiaCajas();
-            } else {
-                alert('Error al guardar en la base de datos')
-            }
+    Swal.fire({
+        title: 'Usuarios',
+        text: "Esta seguro de eliminar el registro!",
+        icon: 'danger',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Eliminar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: 'http://localhost:3000/api/v1/usuarios/' + id,
+                type: 'DELETE',
+                processData: false,
+                contentType: false,
+                cache: false,
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                success: (estado) => {
+                    console.log(estado);
+                    if (estado.status == 200) {
+                        Swal.fire(
+                            'Usuarios!',
+                            estado.msg,
+                            'success'
+                          )
+                        cargaTabla();
+                       
+                    } else {
+                        alert('Error al guardar en la base de datos')
+                    }
+                }
+            });
+
+        
         }
-    });
+      })
+
+
+
+
+    
 }
 var editar = (id) => {
     $.get('http://localhost:3000/api/v1/usuarios/' + id, (IUsuario) => {
